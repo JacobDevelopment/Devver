@@ -1,6 +1,7 @@
 package me.jacob.devver.event;
 
 import me.jacob.devver.Config;
+import me.jacob.devver.command.CommandRegistry;
 import me.jacob.devver.utility.Constants;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -16,8 +17,11 @@ public class GuildEvent extends ListenerAdapter {
 
 	private final Config config;
 
+	private final CommandRegistry commandRegistry;
+
 	public GuildEvent(Config config) {
 		this.config = config;
+		this.commandRegistry = new CommandRegistry();
 	}
 
 	/**
@@ -32,9 +36,12 @@ public class GuildEvent extends ListenerAdapter {
 		if (event.getAuthor().isBot() || event.isWebhookMessage())
 			return;
 
+		if (isBlacklisted(event.getAuthor().getIdLong()))
+			return;
+
 		final String contentRaw = event.getMessage().getContentRaw();
 		if (contentRaw.startsWith(Constants.PREFIX)) {
-
+			commandRegistry.run(event);
 		}
 	}
 
@@ -93,4 +100,20 @@ public class GuildEvent extends ListenerAdapter {
 				.queue();
 	}
 
+
+	/**
+	 * This method checks if the member sending a message
+	 * is blacklisted via the config.json file, and if so
+	 * the message will ultimately be ignored and won't
+	 * be registered as a command if possible.
+	 *
+	 * @param memberId - The id of a {@link Member} that sent a message.
+	 * @return - True or false.
+	 */
+	private boolean isBlacklisted(long memberId) {
+		for (Object object : config.getBuiltInstance().getArray("blacklisted_ids"))
+			if ((long) object == memberId)
+				return true;
+		return false;
+	}
 }
