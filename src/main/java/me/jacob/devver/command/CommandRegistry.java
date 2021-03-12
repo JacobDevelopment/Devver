@@ -28,7 +28,6 @@ public class CommandRegistry {
 			if (event.getMember() == null)
 				return;
 
-
 			final String contentRaw = event.getMessage().getContentRaw().substring(Constants.PREFIX.length());
 			final String[] args = contentRaw.split("\\s+");
 
@@ -52,6 +51,9 @@ public class CommandRegistry {
 
 	private void putCommand(Command command) {
 		COMMAND_MAP.put(command.getName(), command);
+		if (command.getAliases() == null)
+			return;
+
 		for (String alias : command.getAliases())
 			COMMAND_MAP.put(alias, command);
 	}

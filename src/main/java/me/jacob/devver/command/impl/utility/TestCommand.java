@@ -14,6 +14,6 @@ public class TestCommand extends Command {
 
 	@Override
 	public void run(CommandContext context, String[] args) {
-
+		context.reply("I am working... I think?", 10);
 	}
 }

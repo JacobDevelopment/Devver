@@ -24,16 +24,17 @@ public class BotBuilder {
 		this.config = config;
 	}
 
-	public void buildDevver() throws LoginException {
+	public void buildDevver() throws LoginException, InterruptedException {
 		final String token = config.getBuiltInstance().getString("token");
 		Checks.notEmptyOrNull(token, "token");
 
-		this.jda = JDABuilder.create(token, List.of(GatewayIntent.GUILD_MEMBERS, GatewayIntent.DIRECT_MESSAGES))
+		this.jda = JDABuilder.create(token, List.of(GatewayIntent.GUILD_MEMBERS, GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES))
 				.disableCache(List.of(CacheFlag.values()))
 				.setMemberCachePolicy(new CustomCachePolicy(config))
 				.setChunkingFilter(ChunkingFilter.include(config.getBuiltInstance().getLong("owner_id")))
 				.addEventListeners(new GuildEvent(config))
-				.build();
+				.build()
+				.awaitReady();
 	}
 
 	public JDA getJda() {
