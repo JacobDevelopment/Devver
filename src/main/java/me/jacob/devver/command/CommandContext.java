@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.concurrent.TimeUnit;
@@ -25,8 +26,16 @@ public class CommandContext {
 		return this.getEvent().getChannel();
 	}
 
+	public Message getMessage() {
+		return this.getEvent().getMessage();
+	}
+
 	public Member getMember() {
 		return this.getEvent().getMember();
+	}
+
+	public User getAuthor() {
+		return this.getEvent().getAuthor();
 	}
 
 	public void reply(String content, int secondsDelay) {
@@ -52,13 +61,13 @@ public class CommandContext {
 	}
 
 	public void reply(Consumer<EmbedBuilder> embedBuilderConsumer) {
-		final EmbedBuilder embedBuilder = new EmbedBuilder().setColor(0xfffffff);
+		final EmbedBuilder embedBuilder = new EmbedBuilder().setColor(0x34495e);
 		embedBuilderConsumer.accept(embedBuilder);
 		reply(embedBuilder);
 	}
 
 	public void reply(Consumer<EmbedBuilder> embedBuilderConsumer, int secondsDelay) {
-		final EmbedBuilder embedBuilder = new EmbedBuilder().setColor(0xfffffff);
+		final EmbedBuilder embedBuilder = new EmbedBuilder().setColor(0x34495e);
 		embedBuilderConsumer.accept(embedBuilder);
 		reply(embedBuilder, secondsDelay);
 	}

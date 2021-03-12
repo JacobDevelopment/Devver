@@ -1,8 +1,8 @@
 package me.jacob.devver.command;
 
-import me.jacob.devver.Config;
 import me.jacob.devver.command.impl.utility.GitHubCommand;
 import me.jacob.devver.command.impl.utility.TestCommand;
+import me.jacob.devver.command.impl.utility.VersionCommand;
 import me.jacob.devver.utility.Constants;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
@@ -20,7 +20,8 @@ public class CommandRegistry {
 	public CommandRegistry() {
 		putCommands(
 				new TestCommand(),
-				new GitHubCommand()
+				new GitHubCommand(),
+				new VersionCommand()
 		);
 	}
 
