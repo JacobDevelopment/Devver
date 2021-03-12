@@ -1,0 +1,75 @@
+package me.jacob.devver.event;
+
+import me.jacob.devver.Config;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
+
+public class GuildEvent extends ListenerAdapter {
+
+	private final Config config;
+
+	public GuildEvent(Config config) {
+		this.config = config;
+	}
+
+	/**
+	 * At the event Devver is somehow added to a server, and isn't
+	 * caught in the {@link GuildJoinEvent}, we will leave based on the
+	 * {@link GuildReadyEvent}.
+	 *
+	 * @param event - When a guild is marked ready via discord.
+	 */
+	@Override
+	public void onGuildReady(@NotNull GuildReadyEvent event) {
+		final long guildId = event.getGuild().getIdLong();
+		if (guildId != config.getBuiltInstance().getLong("server_id"))
+			event.getGuild().leave().queue();
+	}
+
+	/**
+	 * Ultimately this event will never fire, but other precautions were added
+	 * in case an unlikely event occurred: which would be the bot joining a guild
+	 * other than the ones owned by me. It is also disabled in the developer
+	 * portal that no one can invite this bot unless it's by my user itself.
+	 *
+	 * @param event - The event in which the self member (Devver) joins a guild.
+	 */
+	@Override
+	public void onGuildJoin(@NotNull GuildJoinEvent event) {
+		final TextChannel logChannel = event.getJDA().getTextChannelById(config.getBuiltInstance().getLong("log_channel"));
+		if (logChannel == null)
+			return;
+
+		final long guildId = event.getGuild().getIdLong();
+		final long mainId = config.getBuiltInstance().getLong("server_id");
+
+		if (guildId != mainId) {
+			event.getGuild().retrieveOwner()
+					.map(Member::getUser)
+					.queue(this::sendPrivateMessage, throwable -> {
+						logChannel.sendMessageFormat("I tried dm'ing the owner, but It failed! (Guild: %s)", guildId).queue();
+					});
+
+			event.getGuild().leave().queue(
+					success -> logChannel.sendMessageFormat("Successfully left %s!", guildId).queue(),
+					error -> logChannel.sendMessageFormat("Couldn't leave %s due to an error!", guildId).queue()
+			);
+		}
+
+	}
+
+	/**
+	 * @param user - The user we are private messaging in this case.
+	 */
+	private void sendPrivateMessage(User user) {
+		user.openPrivateChannel()
+				.flatMap(privateChannel -> privateChannel.sendMessage("You are not allowed to use this bot!"))
+				.queue();
+	}
+
+}
