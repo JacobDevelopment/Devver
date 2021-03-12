@@ -10,7 +10,8 @@ public abstract class Command {
 	private final String description;
 
 	private final String[] aliases;
-	private final Permission[] permissions;
+	private Permission permission;
+	private Permission[] permissions;
 
 	public Command(String name, String description) {
 		this.name = name;
@@ -19,12 +20,20 @@ public abstract class Command {
 		this.permissions = new Permission[]{Permission.MESSAGE_WRITE};
 	}
 
-	public Command(String name, String description, String[] aliases, Permission[] permissions) {
+	public Command(String name, String description, String[] aliases, Permission permission) {
+		this.name = name;
+		this.description = description;
+		this.aliases = aliases;
+		this.permission = permission;
+	}
+
+	public Command(String name, String description, String[] aliases, Permission... permissions) {
 		this.name = name;
 		this.description = description;
 		this.aliases = aliases;
 		this.permissions = permissions;
 	}
+
 
 	public abstract void run(CommandContext context, String[] args);
 
@@ -42,5 +51,9 @@ public abstract class Command {
 
 	public Permission[] getPermissions() {
 		return permissions;
+	}
+
+	public Permission getPermission() {
+		return permission;
 	}
 }
