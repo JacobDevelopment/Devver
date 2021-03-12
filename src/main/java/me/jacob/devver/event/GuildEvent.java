@@ -1,11 +1,14 @@
 package me.jacob.devver.event;
 
 import me.jacob.devver.Config;
+import me.jacob.devver.utility.Constants;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +18,24 @@ public class GuildEvent extends ListenerAdapter {
 
 	public GuildEvent(Config config) {
 		this.config = config;
+	}
+
+	/**
+	 * We will utilize the {@link GuildMessageReceivedEvent} to orchestrate
+	 * command handling until SlashCommands are properly implemented
+	 * within JDA and there are no prohibiting bugs.
+	 *
+	 * @param event - Messages we receive in the channels.
+	 */
+	@Override
+	public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+		if (event.getAuthor().isBot() || event.isWebhookMessage())
+			return;
+
+		final String contentRaw = event.getMessage().getContentRaw();
+		if (contentRaw.startsWith(Constants.PREFIX)) {
+
+		}
 	}
 
 	/**

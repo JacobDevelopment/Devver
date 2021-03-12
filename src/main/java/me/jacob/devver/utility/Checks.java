@@ -1,6 +1,6 @@
 package me.jacob.devver.utility;
 
-public class Checks {
+public final class Checks {
 
 	public static void notEmptyOrNull(String string, String name) {
 		if (string == null || string.isEmpty())
