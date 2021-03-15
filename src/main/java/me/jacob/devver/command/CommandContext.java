@@ -1,25 +1,40 @@
 package me.jacob.devver.command;
 
+import me.jacob.devver.Config;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class CommandContext {
 
 	private final GuildMessageReceivedEvent event;
+	private final Config config;
+	private final String invoker;
 
-	public CommandContext(GuildMessageReceivedEvent event) {
+	public CommandContext(GuildMessageReceivedEvent event, Config config, String invoker) {
 		this.event = event;
+		this.config = config;
+		this.invoker = invoker;
 	}
 
 	public GuildMessageReceivedEvent getEvent() {
 		return event;
+	}
+
+	public Config getConfig() {
+		return config;
+	}
+
+	public String getInvoker() {
+		return invoker;
+	}
+
+	public Guild getGuild() {
+		return this.getEvent().getGuild();
 	}
 
 	public TextChannel getChannel() {
@@ -36,6 +51,14 @@ public class CommandContext {
 
 	public User getAuthor() {
 		return this.getEvent().getAuthor();
+	}
+
+	public List<TextChannel> getMentionedChannels() {
+		return this.getMessage().getMentionedChannels();
+	}
+
+	public TextChannel getMentionedChannel() {
+		return getMentionedChannels().size() == 1 ? getMentionedChannels().get(0) : null;
 	}
 
 	public void reply(String content, int secondsDelay) {

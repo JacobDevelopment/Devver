@@ -41,7 +41,7 @@ public class GuildEvent extends ListenerAdapter {
 
 		final String contentRaw = event.getMessage().getContentRaw();
 		if (contentRaw.startsWith(Constants.PREFIX)) {
-			commandRegistry.run(event);
+			commandRegistry.run(event, config);
 		}
 	}
 

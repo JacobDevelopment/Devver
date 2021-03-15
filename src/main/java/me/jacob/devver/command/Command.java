@@ -2,8 +2,6 @@ package me.jacob.devver.command;
 
 import net.dv8tion.jda.api.Permission;
 
-import java.util.List;
-
 public abstract class Command {
 
 	private final String name;

@@ -1,5 +1,7 @@
 package me.jacob.devver.command;
 
+import me.jacob.devver.Config;
+import me.jacob.devver.command.impl.admin.AnnounceCommand;
 import me.jacob.devver.command.impl.utility.GitHubCommand;
 import me.jacob.devver.command.impl.utility.TestCommand;
 import me.jacob.devver.command.impl.utility.VersionCommand;
@@ -21,11 +23,12 @@ public class CommandRegistry {
 		putCommands(
 				new TestCommand(),
 				new GitHubCommand(),
-				new VersionCommand()
+				new VersionCommand(),
+				new AnnounceCommand()
 		);
 	}
 
-	public void run(GuildMessageReceivedEvent event) {
+	public void run(GuildMessageReceivedEvent event, Config config) {
 		executorService.submit(() -> {
 			if (event.getAuthor().isBot() || event.isWebhookMessage())
 				return;
@@ -41,7 +44,7 @@ public class CommandRegistry {
 				return;
 
 			final String[] finalArgs = Arrays.copyOfRange(args, 1, args.length);
-			command.run(new CommandContext(event), finalArgs);
+			command.run(new CommandContext(event, config, args[0].toLowerCase()), finalArgs);
 		});
 	}
 

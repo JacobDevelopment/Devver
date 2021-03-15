@@ -1,5 +1,6 @@
 package me.jacob.devver.utility;
 
+
 public final class StringUtils {
 
 	public static String linkMarkdown(String name, String url) {
