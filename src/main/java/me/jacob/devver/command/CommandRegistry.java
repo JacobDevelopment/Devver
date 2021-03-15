@@ -49,6 +49,9 @@ public class CommandRegistry {
 			if (command == null)
 				return;
 
+			if (!event.getMember().hasPermission(command.getPermissions()))
+				return;
+
 			event.getMessage().delete().queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
 
 			final String[] finalArgs = Arrays.copyOfRange(args, 1, args.length);
