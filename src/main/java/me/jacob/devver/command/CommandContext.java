@@ -49,6 +49,10 @@ public class CommandContext {
 		return this.getEvent().getMember();
 	}
 
+	public Member getSelfMember() {
+		return this.getGuild().getSelfMember();
+	}
+
 	public User getAuthor() {
 		return this.getEvent().getAuthor();
 	}

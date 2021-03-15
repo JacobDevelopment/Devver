@@ -3,10 +3,13 @@ package me.jacob.devver.command;
 import me.jacob.devver.Config;
 import me.jacob.devver.command.impl.admin.AnnounceCommand;
 import me.jacob.devver.command.impl.utility.GitHubCommand;
+import me.jacob.devver.command.impl.utility.SuggestionCommand;
 import me.jacob.devver.command.impl.utility.TestCommand;
 import me.jacob.devver.command.impl.utility.VersionCommand;
 import me.jacob.devver.utility.Constants;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,7 +27,8 @@ public class CommandRegistry {
 				new TestCommand(),
 				new GitHubCommand(),
 				new VersionCommand(),
-				new AnnounceCommand()
+				new AnnounceCommand(),
+				new SuggestionCommand()
 		);
 	}
 
@@ -42,6 +46,8 @@ public class CommandRegistry {
 			final Command command = getCommand(args[0].toLowerCase());
 			if (command == null)
 				return;
+
+			event.getMessage().delete().queue(null, new ErrorHandler().ignore(ErrorResponse.UNKNOWN_MESSAGE));
 
 			final String[] finalArgs = Arrays.copyOfRange(args, 1, args.length);
 			command.run(new CommandContext(event, config, args[0].toLowerCase()), finalArgs);
