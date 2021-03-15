@@ -17,7 +17,7 @@ public class AnnounceCommand extends Command {
 	public AnnounceCommand() {
 		super(
 				"announce",
-				"Sends an announcement message to the desired channel or to the provided one.",
+				"Sends a message to the announcement channel.",
 				new String[]{"ann"},
 				Permission.ADMINISTRATOR
 		);

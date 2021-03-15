@@ -2,20 +2,19 @@ package me.jacob.devver.command;
 
 import me.jacob.devver.Config;
 import me.jacob.devver.command.impl.admin.AnnounceCommand;
-import me.jacob.devver.command.impl.utility.GitHubCommand;
-import me.jacob.devver.command.impl.utility.SuggestionCommand;
-import me.jacob.devver.command.impl.utility.TestCommand;
-import me.jacob.devver.command.impl.utility.VersionCommand;
+import me.jacob.devver.command.impl.utility.*;
 import me.jacob.devver.utility.Constants;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class CommandRegistry {
 
@@ -23,17 +22,20 @@ public class CommandRegistry {
 	private final ExecutorService executorService = Executors.newCachedThreadPool();
 
 	public CommandRegistry() {
-		putCommands(
-				new TestCommand(),
-				new GitHubCommand(),
-				new VersionCommand(),
-				new AnnounceCommand(),
-				new SuggestionCommand()
-		);
+		synchronized (this) {
+			putCommands(
+					new HelpCommand(this),
+					new AnnounceCommand(),
+					new SuggestionCommand(),
+					new VersionCommand(),
+					new TestCommand(),
+					new GitHubCommand()
+			);
+		}
 	}
 
 	public void run(GuildMessageReceivedEvent event, Config config) {
-		executorService.submit(() -> {
+		executorService.execute(() -> {
 			if (event.getAuthor().isBot() || event.isWebhookMessage())
 				return;
 
@@ -58,7 +60,7 @@ public class CommandRegistry {
 		return COMMAND_MAP.get(name);
 	}
 
-	private void putCommands(Command... commands) {
+	public void putCommands(Command... commands) {
 		for (Command command : commands)
 			putCommand(command);
 	}
@@ -70,6 +72,15 @@ public class CommandRegistry {
 
 		for (String alias : command.getAliases())
 			COMMAND_MAP.put(alias, command);
+	}
+
+	public List<Command> getCommands(Member member) {
+		return COMMAND_MAP.values()
+				.stream()
+				.distinct()
+				.filter(command -> member.hasPermission(command.getPermissions()))
+				.sorted(Comparator.comparing(Command::getName))
+				.collect(Collectors.toUnmodifiableList());
 	}
 
 }

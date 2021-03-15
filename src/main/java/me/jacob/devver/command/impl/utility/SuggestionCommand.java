@@ -5,9 +5,8 @@ import me.jacob.devver.command.CommandContext;
 import me.jacob.devver.utility.Constants;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.requests.RestAction;
+
 
 import java.awt.*;
 import java.time.Instant;
